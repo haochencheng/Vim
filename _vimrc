@@ -1,13 +1,16 @@
+" 引用自定义的vundle配置文件,存放vimrc的地方(不是固定写法，可自定义)
+" 判断操作系统类型
+if(has('win32') || has('win64'))
+    source $VIM_HOME/vimfiles/vundle_vimrc
+    source $VIM_HOME/vimfiles/cc_vimrc
+else
+    source ~/.vim/vundle_vimrc
+    source ~/.vim/basic_vimrc
+endif
 source $VIMRUNTIME/vimrc_example.vim
 source $VIMRUNTIME/mswin.vim
 behave mswin
-set nu
-syntax on
-set autoindent
-set ai!
-inoremap jk <Esc>
-set encoding=utf-8
-filetype plugin indent on
+
 set diffexpr=MyDiff()
 function MyDiff()
   let opt = '-a --binary '
