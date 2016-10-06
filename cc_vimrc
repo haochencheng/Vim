@@ -2,8 +2,9 @@ inoremap jk <ESC>
 colorscheme desert
 " 主题
 let g:molokai_original = 1
-
+let g:rehash256 = 1
 " 基础设置
+set ai							"自动缩进
 set guifont=Monaco:h14          " 字体 && 字号
 syntax on                       " 打开语法高亮
 set number                      " 显示行号
@@ -69,7 +70,7 @@ inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDow
 inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
 
 "youcompleteme  默认tab  s-tab 和自动补全冲突
-"let g:ycm_key_list_select_completion=['<c-n>']
+let g:ycm_key_list_select_completion=['<c-n>']
 let g:ycm_key_list_select_completion = ['<Down>']
 "let g:ycm_key_list_previous_completion=['<c-p>']
 let g:ycm_key_list_previous_completion = ['<Up>']
@@ -91,7 +92,63 @@ let g:ycm_complete_in_strings = 1
 let g:ycm_collect_identifiers_from_comments_and_strings = 0
 
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR> " 跳转到定义处
-
+let g:ycm_semantic_triggers =  {
+  \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
+  \ }
 let g:ycm_server_keep_logfiles = 1
 let g:ycm_server_log_level = 'debug'
+"下面参考博客 http://oldj.net/article/vim-parenthesis/
+" 插入匹配括号 
+inoremap ( ()<LEFT>
+inoremap [ []<LEFT>
+inoremap { {<ENTER><TAB><ENTER>}<UP><ESC>$a
+inoremap < <><LEFT>
+inoremap " ""<LEFT>
+inoremap ' ''<LEFT>
+
+" 按退格键时判断当前光标前一个字符，如果是左括号，则删除对应的右括号以及括号中间的内容
+function! RemovePairs()
+	let l:line = getline(".")
+	let l:previous_char = l:line[col(".")-1] " 取得当前光标前一个字符
+ 
+	if index(["(", "[", "{","<"], l:previous_char) != -1	
+		let l:original_pos = getpos(".")
+		execute "normal %"
+		let l:new_pos = getpos(".")
+ 
+		" 如果没有匹配的右括号
+		if l:original_pos == l:new_pos
+			execute "normal! a\<BS>"
+			return
+		end
+ 
+		let l:line2 = getline(".")
+		if len(l:line2) == col(".")
+			" 如果右括号是当前行最后一个字符
+			execute "normal! v%xa"
+		else
+			" 如果右括号不是当前行最后一个字符
+			execute "normal! v%xi"
+		end
+ 
+	else
+		execute "normal! a\<BS>"
+	end
+endfunction
+" 用退格键删除一个左括号时同时删除对应的右括号
+inoremap <BS> <ESC>:call RemovePairs()<CR>a
+" 输入一个字符时，如果下一个字符也是括号，则删除它，避免出现重复字符
+function! RemoveNextDoubleChar(char)
+	let l:line = getline(".")
+	let l:next_char = l:line[col(".")] " 取得当前光标后一个字符
+ 
+	if a:char == l:next_char
+		execute "normal! l"
+	else
+		execute "normal! i" . a:char . ""
+	end
+endfunction
+inoremap ) <ESC>:call RemoveNextDoubleChar(')')<CR>a
+inoremap ] <ESC>:call RemoveNextDoubleChar(']')<CR>a
+inoremap } <ESC>:call RemoveNextDoubleChar('}')<CR>a
 
