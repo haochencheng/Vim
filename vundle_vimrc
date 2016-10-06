@@ -12,13 +12,139 @@ else
 endif
 call vundle#begin(path)
 
-" ÈÃvundle¹ÜÀí²å¼ş°æ±¾,±ØĞë
-
+"js´úÂë²¹È«
 Plugin 'marijnh/tern_for_vim'
+" ÈÃvundle¹ÜÀí²å¼ş°æ±¾,±ØĞë
+"Vundle¹ÜÀí²å¼ş
 Plugin 'VundleVim/Vundle.vim'
+
+"js´úÂë×Ô¶¯²¹È«
 Bundle 'Valloric/YouCompleteMe'
+let g:ycm_global_ycm_extra_conf='$VIM_HOME/vimfiles/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+" ×Ô¶¯²¹È«ÅäÖÃ
+
+" ²»ÏÔÊ¾¿ªÆôvimÊ±¼ì²éycm_extra_confÎÄ¼şµÄĞÅÏ¢
+let g:ycm_confirm_extra_conf = 0
+" ¿ªÆô»ùÓÚtagµÄ²¹È«£¬¿ÉÒÔÔÚÕâÖ®ºóÌí¼ÓĞèÒªµÄ±êÇ©Â·¾¶
+let g:ycm_collect_identifiers_from_tags_files = 1
+" ¿ªÆôÓïÒå²¹È«
+let g:ycm_seed_identifiers_with_syntax = 1
+"×¢ÊÍºÍ×Ö·û´®ÖĞµÄÎÄ×ÖÒ²»á±»ÊÕÈë²¹È«
+let g:ycm_collect_identifiers_from_comments_and_strings = 0
+" ÊäÈëµÚ 2 ¸ö×Ö·û¿ªÊ¼²¹È«
+let g:ycm_min_num_of_chars_for_completion= 2
+" ½ûÖ¹»º´æÆ¥ÅäÏî,Ã¿´Î¶¼ÖØĞÂÉú³ÉÆ¥ÅäÏî
+let g:ycm_cache_omnifunc=0
+"ÔÚ×¢ÊÍÊäÈëÖĞÒ²ÄÜ²¹È«
+let g:ycm_complete_in_comments = 1
+"ÔÚ×Ö·û´®ÊäÈëÖĞÒ²ÄÜ²¹È«
+let g:ycm_complete_in_strings = 1
+"¶¨Òå¿ì½İ½¡²¹È«
+let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
+" ÉèÖÃÔÚÏÂÃæ¼¸ÖÖ¸ñÊ½µÄÎÄ¼şÉÏÆÁ±Îycm
+let g:ycm_filetype_blacklist = {
+      \ 'tagbar' : 1,
+      \ 'qf' : 1,
+      \ 'notes' : 1,
+      \ 'markdown' : 1,
+      \ 'unite' : 1,
+      \ 'text' : 1,
+      \ 'vimwiki' : 1,
+      \ 'pandoc' : 1,
+      \ 'infolog' : 1,
+      \ 'mail' : 1
+      \}
+"ÉèÖÃ¹Ø½¡×Ö´¥·¢²¹È«
+let g:ycm_semantic_triggers =  {
+  \   'c' : ['->', '.', ' ', '(', '[', '&'],
+  \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+  \             're!\[.*\]\s'],
+  \   'ocaml' : ['.', '#'],
+  \   'cpp,objcpp' : ['->', '.', '::'],
+  \   'perl' : ['->'],
+  \   'php' : ['->', '::'],
+  \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
+  \   'ruby' : ['.', '::'],
+  \   'lua' : ['.', ':'],
+  \   'erlang' : [':'],
+  \   'css': [ 're!^\s{4}', 're!:\s+' ],
+  \ }
+let g:ycm_cache_omnifunc = 1
+let g:ycm_use_ultisnips_completer = 1
+"¶¨Òåº¯Êı¸ú×Ù¿ì½İ½¡
+nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+
+
+
+let g:ycm_server_keep_logfiles = 1
+let g:ycm_server_log_level = 'debug'
+" ±È½ÏÏ²»¶ÓÃtabÀ´Ñ¡Ôñ²¹È«...
+function! MyTabFunction ()
+    let line = getline('.')
+    let substr = strpart(line, -1, col('.')+1)
+    let substr = matchstr(substr, "[^ \t]*$")
+    if strlen(substr) == 0
+        return "\<tab>"
+    endif
+    return pumvisible() ? "\<c-n>" : "\<c-x>\<c-o>"
+endfunction
+inoremap <tab> <c-r>=MyTabFunction()<cr>
+
+
+
 Bundle 'Valloric/ListToggle'
+
+"¼ì²éjsÓï·¨´úÂë´íÎó
 Bundle 'scrooloose/syntastic'
+let g:syntastic_error_symbol='X'
+let g:syntastic_warning_symbol='>'
+let g:syntastic_check_on_open=1
+let g:syntastic_check_on_wq=0
+let g:syntastic_enable_highlighting=1
+let g:syntastic_javascript_checkers = ['jsl', 'jshint']
+let g:syntastic_html_checkers=['tidy', 'jshint']
+" ĞŞ¸Ä¸ßÁÁµÄ±³¾°É«, ÊÊÓ¦Ö÷Ìâ
+""highlight SyntasticErrorSign guifg=white guibg=black
+" to see error location list
+let g:syntastic_always_populate_loc_list = 0
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_loc_list_height = 6
+function! ToggleErrors()
+    let old_last_winnr = winnr('$')
+    lclose
+    if old_last_winnr == winnr('$')
+        " Nothing was closed, open syntastic error location panel
+        Errors
+    endif
+endfunction
+nnoremap <Leader>s :call ToggleErrors()<cr>
+" nnoremap <Leader>sn :lnext<cr>
+" nnoremap <Leader>sp :lprevious<cr>
+
+"javascriptÓï·¨¸ßÁÁ
+Plugin 'pangloss/vim-javascript'
+let g:javascript_plugin_ngdoc = 1
+set foldmethod=syntax
+
+"×Ô¶¯²¹È«<div></div>
+Bundle 'docunext/closetag.vim'
+let g:closetag_html_style=1
+
+"ement ×Ô¶¯Éú³Éhtml´úÂë
+Plugin 'mattn/emmet-vim'
+
+"ÎÄ¼şä¯ÀÀ
+Plugin 'scrooloose/nerdtree'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+"ctrl + n ´ò¿ª»òÕß¹Ø±Õnerdtree
+map <C-n> :NERDTreeToggle<CR>  
+
+"´úÂë×¢ÊÍ
+Plugin 'tpope/vim-commentary'
+autocmd FileType apache setlocal commentstring=#\ %s
+
 
 " ÄãµÄËùÓĞ²å¼şĞèÒªÔÚÏÂÃæÕâĞĞÖ®Ç°
 call vundle#end()            " ±ØĞë
@@ -29,7 +155,6 @@ filetype plugin indent on    " ±ØĞë ¼ÓÔØvim×Ô´øºÍ²å¼şÏàÓ¦µÄÓï·¨ºÍÎÄ¼şÀàĞÍÏà¹Ø½Å±
 " :PluginInstall    - °²×°²å¼ş,×·¼Ó `!` ÓÃÒÔ¸üĞÂ»òÊ¹ÓÃ :PluginUpdate
 " :PluginSearch foo - ËÑË÷ foo ; ×·¼Ó `!` Çå³ı±¾µØ»º´æ
 " :PluginClean      - Çå³ıÎ´Ê¹ÓÃ²å¼ş,ĞèÒªÈ·ÈÏ; ×·¼Ó `!` ×Ô¶¯Åú×¼ÒÆ³ıÎ´Ê¹ÓÃ²å¼ş
-"
 " ²éÔÄ :h vundle »ñÈ¡¸ü¶àÏ¸½ÚºÍwikiÒÔ¼°FAQ
 " ½«Äã×Ô¼º¶Ô·Ç²å¼şÆ¬¶Î·ÅÔÚÕâĞĞÖ®ºó
 
